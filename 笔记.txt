@@ -1,0 +1,54 @@
+1.启动mongodb服务
+
+
+mongo.conf文件内容 :
+
+dbpath=/usr/local/mongodb/data
+logpath=/usr/local/mongodb/logs/logs
+logappend=true
+quiet=true
+bind_ip=0.0.0.0
+port=27017
+fork=true
+
+运行：
+mongod -f ./mongo.conf
+
+认证方式启动：
+mongod -f ./mongo.conf --auth
+
+
+2.关闭mongodb数据库
+use admin
+db.shutdownServer()
+
+1.mongodb 创建用户
+创建admin用户
+db.createUser({user:"admin",pwd:"admin",roles:["root"]})
+2.使用账户
+db.auth("admin","admin")
+
+
+创建用户
+db.createUser({user:"root",pwd:"123456",roles:[{role:"dbOwner",db:"dumall"}]})
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
