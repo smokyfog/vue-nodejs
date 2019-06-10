@@ -5,7 +5,7 @@
                 <a href="/">
                     Home
                 </a>
-                <slot></slot>
+                <slot name="bread"></slot>
             </nav>
         </div>
     </section>

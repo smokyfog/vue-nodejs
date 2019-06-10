@@ -16,7 +16,7 @@ import './assets/css/product.css'
 Vue.use(infiniteScroll);
 Vue.use(Vuex);
 Vue.use(VueLazyload, {
-  loading: 'static/loading-svg/loading-bars.svg',
+  loading: 'static/loading-svg/loading-spinning-bubbles.svg',
   try: 3 // default 1
 })
 
