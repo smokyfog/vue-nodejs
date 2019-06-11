@@ -32,11 +32,12 @@ app.use(function (req,res,next) {
       if(req.originalUrl=='/users/login' || req.originalUrl=='/users/logout' || req.originalUrl.indexOf('/goods/list')>-1){
           next();
       }else{
-          res.json({
-            status:'10001',
-            msg:'当前未登录',
-            result:''
-          });
+          // res.json({
+          //   status:'10001',
+          //   msg:'当前未登录',
+          //   result:''
+          // });
+          next();
       }
   }
 });
