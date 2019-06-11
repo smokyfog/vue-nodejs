@@ -9,7 +9,13 @@
           <div class="filter-nav">
             <span class="sortby">Sort by:</span>
             <a href="javascript:void(0)" class="default cur">Default</a>
-            <a href="javascript:void(0)" class="price">Price <svg class="icon icon-arrow-short"><use xlink:href="#icon-arrow-short"></use></svg></a>
+            <a @click="sortGoods"
+              href="javascript:void(0)" class="price">
+              Price
+              <svg class="icon icon-arrow-short">
+                <use xlink:href="#icon-arrow-short"></use>
+              </svg>
+            </a>
             <a href="javascript:void(0)" class="filterby stopPop" @click="showFilterPop">Filter by</a>
           </div>
           <div class="accessory-result">
@@ -17,7 +23,9 @@
             <div class="filter stopPop" :class="{'filterby-show':filterBy}" id="filter">
               <dl class="filter-price">
                 <dt>Price:</dt>
-                <dd><a href="javascript:void(0)" @click="setPriceFilter('all')" :class="{'cur':priceChecked == 'all'}" >All</a></dd>
+                <dd>
+                  <a href="javascript:void(0)" @click="setPriceFilter('all')" :class="{'cur':priceChecked == 'all'}" >All</a>
+                </dd>
                 <dd v-for="(price,index) in priceFilter" :key="index" >
                   <a href="javascript:void(0)" @click="setPriceFilter(index)" :class="{'cur':priceChecked == index }">{{price.startPrice+" - "+price.endPrice}}</a>
                 </dd>
@@ -31,7 +39,7 @@
                   <li v-for="(item,index) in goodsList" :key="index">
                     <div class="pic">
                       <a href="#">
-                        <img v-lazy="'/static/'+item.prodcutImg" alt="">
+                        <img :src="'/static/'+item.prodcutImg" alt="">
                         </a>
                     </div>
                     <div class="main">
@@ -79,7 +87,11 @@
                 ],
                 priceChecked:"all",
                 filterBy:false,
-                overLayFlag:false
+                overLayFlag:false,
+                sortFlag:1,
+                page:1,
+                pageSize:8
+
             }
         },
         mounted(){
@@ -92,8 +104,15 @@
         },
         methods:{
           getCoodsList(){
-            axios.get("/goods").then((data) => {
-              var res = data.data.result
+            var params = {
+              page:this.page,
+              pageSize:this.pageSize,
+              sort:this.sortFlag?1:-1
+            }
+            axios.get("/goods",{
+              params:params
+            }).then((data) => {
+              var res = data.data.result.list
               console.log(res)
               this.goodsList = res
             })
@@ -109,6 +128,11 @@
           setPriceFilter(index){
             this.priceChecked = index;
             this.closePop()
+          },
+          sortGoods() {
+            this.sortFlag = !this.sortFlag
+            this.page = 1,
+            this.getCoodsList()
           }
         }
     }

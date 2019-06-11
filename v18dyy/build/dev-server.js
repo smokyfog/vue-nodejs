@@ -22,13 +22,13 @@ var proxyTable = config.dev.proxyTable
 
 var app = express()
 
-var goodsData = require('../mock/goods.json')
-var router = express.Router()
-router.get("/goods", function (req,res) {
-  console.log("经过了")
-  res.json(goodsData)
-})
-app.use(router)
+// var goodsData = require('../mock/goods.json')
+// var router = express.Router()
+// router.get("/goods", function (req,res) {
+//   console.log("经过了")
+//   res.json(goodsData)
+// })
+// app.use(router)
 
 
 var compiler = webpack(webpackConfig)
