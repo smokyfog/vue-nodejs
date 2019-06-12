@@ -32,6 +32,7 @@
               </dl>
             </div>
 
+            
             <!-- search result accessories list -->
             <div class="accessory-list-wrap">
               <div class="accessory-list col-4">
@@ -43,14 +44,17 @@
                         </a>
                     </div>
                     <div class="main">
-                      <div class="name">{{item.prodcutName}}</div>
-                      <div class="price">{{item.prodcutPrice}}</div>
+                      <div class="name">{{item.productName}}</div>
+                      <div class="price">{{item.salePrice}}</div>
                       <div class="btn-area">
                         <a href="javascript:;" class="btn btn--m">加入购物车</a>
                       </div>
                     </div>
                   </li>
                 </ul>
+                <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" class="load-more" infinite-scroll-distance="20">
+                    <img src="./../assets/loading-spinning-bubbles.svg" v-show="loading">
+                </div>
               </div>
             </div>
           </div>
@@ -66,6 +70,7 @@
     import NavHeader from "../components/NavHeader"
     import NavFooter from "../components/NavFooter"
     import NavBread from "../components/NavBread"
+    
     import axios from "axios"
     export default{
         data(){
@@ -90,7 +95,9 @@
                 overLayFlag:false,
                 sortFlag:1,
                 page:1,
-                pageSize:8
+                pageSize:8,
+                busy:true,
+                loading:false
 
             }
         },
@@ -103,18 +110,34 @@
           NavBread
         },
         methods:{
-          getCoodsList(){
+          getCoodsList(flag){
             var params = {
               page:this.page,
               pageSize:this.pageSize,
-              sort:this.sortFlag?1:-1
+              sort:this.sortFlag?1:-1,
+              priceLevel:this.priceChecked
             }
+            this.loading = true;
             axios.get("/goods",{
               params:params
             }).then((data) => {
-              var res = data.data.result.list
-              console.log(res)
-              this.goodsList = res
+              let res = data.data;
+              this.loading = false;
+              if(res.status == "0"){
+                if(flag){
+                  this.goodsList = this.goodsList.concat(res.result.list);
+                  if(res.result.count = 0){
+                    this.busy = true;
+                  }else{
+                    this.busy = false;
+                  }
+                }else{
+                  this.goodsList = res.result.list;
+                  this.busy = false;
+                }
+              }else{
+                this.goodsList = [];
+              }
             })
           },
           showFilterPop(){
@@ -127,18 +150,32 @@
           },
           setPriceFilter(index){
             this.priceChecked = index;
+            this.page = 1;
+            this.getCoodsList()
             this.closePop()
           },
           sortGoods() {
             this.sortFlag = !this.sortFlag
-            this.page = 1,
+            this.page = 1;
             this.getCoodsList()
+          },
+          loadMore(){
+            this.busy = true;
+            setTimeout(() => {
+              this.page ++;
+              this.busy = false;
+              this.getCoodsList(true)
+            }, 1000);
           }
         }
     }
 </script>
 
 <style>
-
+.load-more{
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+}
 </style>
 
