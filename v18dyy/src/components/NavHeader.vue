@@ -16,9 +16,9 @@
           <div class="navbar-right-container" style="display: flex;">
             <div class="navbar-menu-container">
               <!--<a href="/" class="navbar-link">我的账户</a>-->
-              <span class="navbar-link"></span>
-              <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true">Login</a>
-              <a href="javascript:void(0)" class="navbar-link">Logout</a>
+              <span class="navbar-link" v-text="nickName" v-if="nickName"></span>
+              <a href="javascript:void(0)" v-if="!nickName" class="navbar-link" @click="loginModalFlag=true">Login</a>
+              <a href="javascript:void(0)" v-if="nickName" class="navbar-link" @click="loginout">Logout</a>
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
                 <a class="navbar-link navbar-cart-link" href="/#/cart">
@@ -61,6 +61,7 @@
               </div>
             </div>
             <div class="md-overlay " @click="loginModalFlag=false" v-show="loginModalFlag"></div>
+
 
           </div>
         </div>
@@ -153,11 +154,11 @@
               loginModalFlag:false,
               nickName:""
             }
-            
+
         },
         computed:{
 
-},
+        },
         /*nickName(){
           return this.$store.state.nickName;
         },
@@ -165,7 +166,7 @@
           return this.$store.state.cartCount;
         }*/
         mounted(){
-
+          this.checkLogin();
         },
         methods:{
           login(){
@@ -185,6 +186,23 @@
                 this.nickName = res.result.userName
               }else{
                 this.errorTip = true;
+              }
+            })
+          },
+          loginout(){
+            axios.post("users/logout").then((response) => {
+              let res = response.data;
+              if(res.status == "0"){
+                this.nickName = ''
+              }
+            })
+          },
+          checkLogin(){
+            axios.get("/users/checkLogin").then((response) => {
+              let res = response.data;
+              if(res.status == 0){
+                this.userName = res.result.userName
+                this.nickName = res.result.userName
               }
             })
           }

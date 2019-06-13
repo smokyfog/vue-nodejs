@@ -23,7 +23,7 @@ mongoose.connection.on("disconnected", function(){
 })
 
 //查询商品列表数据
-router.get("/",(req, res,next) => {
+router.get("/list",(req, res,next) => {
   let page = Number(req.query.page);
   let pageSize =Number(req.query.pageSize);
   let sort = req.query.sort;

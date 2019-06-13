@@ -12,7 +12,7 @@
             <a @click="sortGoods"
               href="javascript:void(0)" class="price">
               Price
-              <svg class="icon icon-arrow-short">
+              <svg class="icon icon-arrow-short" :class="{'sort-up':!sortFlag,'sort-down':sortFlag}">
                 <use xlink:href="#icon-arrow-short"></use>
               </svg>
             </a>
@@ -61,6 +61,26 @@
         </div>
       </div>
       <div class="md-overlay" v-show="overLayFlag" @click="closePop"></div>
+      <modal :mdShow="mdShow" v-on:close="closeModal">
+        <p slot="message">
+          请先登陆
+        </p>
+        <div slot="btnGroup">
+            <a class="btn btn--m" href="javascript:;" @click="closeModal">关闭</a>
+        </div>
+      </modal>
+      <modal :mdShow="mdShowCart" v-on:close="closeModal">
+        <p slot="message">
+          <svg class="icon-status-ok">
+            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-status-ok"></use>
+          </svg>
+          <span>加入购物车成功</span>
+        </p>
+        <div slot="btnGroup">
+            <a class="btn btn--m" href="javascript:;" @click="mdShowCart = false">继续购物</a>
+            <router-link class="btn btn--m" to="/cart" >查看购物车</router-link>
+        </div>
+      </modal>
       <nav-footer></nav-footer>
     </div>
 </template>
@@ -70,6 +90,7 @@
     import NavHeader from "../components/NavHeader"
     import NavFooter from "../components/NavFooter"
     import NavBread from "../components/NavBread"
+    import Modal from "../components/Modal"
 
     import axios from "axios"
     export default{
@@ -97,7 +118,9 @@
                 page:1,
                 pageSize:8,
                 busy:true,
-                loading:false
+                loading:false,
+                mdShow:false,
+                mdShowCart:false
 
             }
         },
@@ -107,7 +130,8 @@
         components:{
           NavHeader,
           NavFooter,
-          NavBread
+          NavBread,
+          Modal
         },
         methods:{
           getCoodsList(flag){
@@ -118,7 +142,7 @@
               priceLevel:this.priceChecked
             }
             this.loading = true;
-            axios.get("/goods",{
+            axios.get("/goods/list",{
               params:params
             }).then((data) => {
               let res = data.data;
@@ -173,11 +197,14 @@
             }).then((res) => {
               console.log(res)
               if(res.data.status == 0){
-                alert("加入成功")
+                this.mdShowCart = true;
               }else{
-                alert("加入失败"+res.msg)
+                this.mdShow = true;
               }
             })
+          },
+          closeModal(){
+            this.mdShow = false;
           }
         }
     }
