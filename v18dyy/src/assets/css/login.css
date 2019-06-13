@@ -74,7 +74,7 @@
   text-align: left;
   background: url("/static/icon.png") 0 -100px no-repeat;
 }
-.md-content .error-wrap .error-show{
+.md-content .error-wrap .{
   visibility: visible;
   height: auto;
 }

@@ -17,7 +17,7 @@
             <div class="navbar-menu-container">
               <!--<a href="/" class="navbar-link">我的账户</a>-->
               <span class="navbar-link"></span>
-              <a href="javascript:void(0)" class="navbar-link">Login</a>
+              <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true">Login</a>
               <a href="javascript:void(0)" class="navbar-link">Logout</a>
               <div class="navbar-cart-container">
                 <span class="navbar-cart-count"></span>
@@ -28,6 +28,40 @@
                 </a>
               </div>
             </div>
+
+            <div class="md-modal modal-msg md-modal-transition " :class="{'md-show':loginModalFlag}">
+              <div class="md-modal-inner">
+                <div class="md-top">
+                  <div class="md-title">Login in</div>
+                  <button class="md-close" @click="loginModalFlag=false" >Close</button>
+                </div>
+                <div class="md-content">
+                  <div class="confirm-tips">
+                    <div class="error-wrap">
+                      <span class="error error-show" v-show="errorTip">用户名或者密码错误</span>
+                    </div>
+                    <ul>
+                      <li class="regi_form_input ">
+                        <i class="icon IiconPeople"></i>
+                        <input type="text" tabindex="1" v-model="userName" name="loginname" class="regi_login_input" placeholder="User Name">
+                      </li>
+                      <li class="regi_form_input noMargin">
+                        <i class="icon IiconPwd"></i>
+                        <input type="password" tabindex="2" v-model="userPwd" name="password" class="regi_login_input" placeholder="password">
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="login-wrap">
+                    <a href="javascript:;" @click="login" class="btn-login">登陆</a>
+                  </div>
+                  <div class="btn-wrap">
+                    <slot name="btnGroup"></slot>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md-overlay " @click="loginModalFlag=false" v-show="loginModalFlag"></div>
+
           </div>
         </div>
       </header>
@@ -102,6 +136,9 @@
     height: 25px;
     transform: scaleX(-1);
   }
+  .error-show{
+    visibility: inherit !important;
+  }
 </style>
 <script>
     import './../assets/css/login.css'
@@ -110,8 +147,13 @@
     export default{
         data(){
             return{
-
+              userName:"",
+              userPwd:"",
+              errorTip:false,
+              loginModalFlag:false,
+              nickName:""
             }
+            
         },
         computed:{
 
@@ -126,7 +168,26 @@
 
         },
         methods:{
-
+          login(){
+            if(!this.userName || !this.userPwd){
+              this.errorTip = true;
+              return
+            }
+            axios.post("/users/login",{
+              userName:this.userName,
+              userPwd:this.userPwd
+            }).then((response) => {
+              let res = response.data;
+              console.log(res)
+              if(res.status == "0"){
+                this.errorTip = false;
+                this.loginModalFlag= false
+                this.nickName = res.result.userName
+              }else{
+                this.errorTip = true;
+              }
+            })
+          }
         }
     }
 </script>

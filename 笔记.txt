@@ -32,6 +32,9 @@ db.auth("admin","admin")
 创建用户
 db.createUser({user:"root",pwd:"123456",roles:[{role:"dbOwner",db:"dumall"}]})
 
+
+批量导入数据库
+./mongoimport -u "admin" -p "admin" --authenticationDatabase "admin"  -d domall -c goods --jsonArray  ./goods.json
  
 
 
