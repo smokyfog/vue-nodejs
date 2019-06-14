@@ -59,7 +59,7 @@
               </ul>
             </div>
             <ul class="cart-item-list">
-              <li v-for="(item,index) in cartList" :key="index">
+              <li v-for="item in cartList">
                 <div class="cart-tab-1">
                   <div class="cart-item-check">
                     <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
@@ -69,7 +69,7 @@
                     </a>
                   </div>
                   <div class="cart-item-pic">
-                    <img v-lazy="'/static/'+item.prodcutImg" v-bind:alt="item.productName">
+                    <img v-lazy="'/static/'+item.productImage" v-bind:alt="item.productName">
                   </div>
                   <div class="cart-item-title">
                     <div class="item-name">{{item.productName}}</div>
@@ -173,17 +173,7 @@
     export default{
         data(){
             return{
-                cartList:[
-                  {
-                    checked:"1",
-                    productId:10001,
-                    productName:"小米6",
-                    prodcutPrice:1499,
-                    prodcutImg:"mi6.jpg",
-                    salePrice:2499,
-                    productNum:249
-                  }
-                ],
+                cartList:[],
                 delItem:{},
                 modalConfirm:false
             }
@@ -242,8 +232,8 @@
                   let res = response.data;
                   if(res.status == '0'){
                     this.modalConfirm = false;
-                    // var delCount = this.delItem.productNum;
-                    // this.$store.commit("updateCartCount",-delCount);
+                    var delCount = this.delItem.productNum;
+                    this.$store.commit("updateCartCount",-delCount);
                     this.init();
                   }
               });
@@ -263,11 +253,11 @@
                 axios.post("/users/cartEdit",{
                   productId:item.productId,
                   productNum:item.productNum,
-                  // checked:item.checked
+                  checked:item.checked
                 }).then((response)=>{
                     let res = response.data;
                     if(res.status=="0"){
-                      
+                      this.$store.commit("updateCartCount",flag=="add"?1:-1);
                     }
                 })
             },

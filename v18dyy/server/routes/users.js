@@ -64,6 +64,7 @@ router.post("/logout", (req, res, next) => {
   })
 })
 
+
 router.get("/checkLogin",(req, res, next) => {
   if(req.cookies.userId){
     res.json({
@@ -81,6 +82,85 @@ router.get("/checkLogin",(req, res, next) => {
       result:''
     })
   }
+})
+
+//查询当前用户的购物车数据
+router.get("/cartList", (req, res, next) => {
+  var userId = req.cookies.userId;
+  User.findOne({userId:userId}, (err, doc) => {
+    if(err){
+      res.json({
+        status:"1",
+        msg:err.message,
+        result:''
+      })
+    }else{
+      if(doc){
+        res.json({
+          status:"0",
+          msg:"",
+          result:doc.cartList
+        })
+      }
+    }
+  })
+})
+
+//购物车删除
+router.post("/cartDel", (req, res, next) => {
+  var userId = req.cookies.userId;
+  var productId = req.body.productId;
+  console.log(userId,productId);
+  User.update({
+    userId:userId
+  }, {
+    $pull:{
+      "cartList":{
+        "productId":productId
+      }
+    }
+  },(err, doc) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      res.json({
+        status:'0',
+        msg:'',
+        result:'success'
+      })
+    }
+  })
+})
+
+//修改商品数量
+router.post("/cartEdit", (req, res, next) => {
+  var userId = req.cookies.userId;
+  var productId = req.body.productId;
+  var productNum = req.body.productNum;
+  User.update({
+    "userId":userId,
+    "cartList.productId":productId
+  },{
+    "cartList.$.productNum":productNum
+  },(err, doc) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      res.json({
+        status:'0',
+        msg:'',
+        result:'success'
+      })
+    }
+  })
 })
 
 
