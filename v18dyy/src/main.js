@@ -20,7 +20,7 @@ Vue.use(VueLazyload, {
   try: 3 // default 1
 })
 
-Vue.filter("currency",currency);
+Vue.filter("currency",currency);  //全局过滤器
 Vue.config.productionTip = false;
 
 const store = new Vuex.Store({

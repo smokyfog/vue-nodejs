@@ -110,7 +110,6 @@ router.get("/cartList", (req, res, next) => {
 router.post("/cartDel", (req, res, next) => {
   var userId = req.cookies.userId;
   var productId = req.body.productId;
-  console.log(userId,productId);
   User.update({
     userId:userId
   }, {
@@ -141,11 +140,13 @@ router.post("/cartEdit", (req, res, next) => {
   var userId = req.cookies.userId;
   var productId = req.body.productId;
   var productNum = req.body.productNum;
+  var checked = req.body.checked;
   User.update({
     "userId":userId,
     "cartList.productId":productId
   },{
-    "cartList.$.productNum":productNum
+    "cartList.$.productNum":productNum,
+    "cartList.$.checked":checked
   },(err, doc) => {
     if(err){
       res.json({
@@ -158,6 +159,63 @@ router.post("/cartEdit", (req, res, next) => {
         status:'0',
         msg:'',
         result:'success'
+      })
+    }
+  })
+})
+
+//购物车全选
+router.post("/editCheckAll", (req, res, next) => {
+  var userId =req.cookies.userId;
+  var checkAll = req.body.checkAll?"1":"0";
+  User.findOne({userId:userId},(err, user) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      if(user){
+        user.cartList.forEach((item) => {
+          item.checked = checkAll;
+        })
+        user.save((err, doc) => {
+          if(err){
+            res.json({
+              status:'1',
+              msg:err.message,
+              result:''
+            })
+          }else{
+            res.json({
+              status:'0',
+              msg:'',
+              result:'success'
+            })
+          }
+        })
+      }
+    }
+  })
+})
+
+
+//查询用户地址接口
+router.get("/addressList", (req, res, next) => {
+  var userId = req.cookies.userId;
+  User.findOne({userId:userId}, (err, doc) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      res.json({
+        status:'0',
+        msg:'',
+        result:doc.addressList
       })
     }
   })

@@ -62,7 +62,7 @@
               <li v-for="(item,index) in cartList" :key="index">
                 <div class="cart-tab-1">
                   <div class="cart-item-check">
-                    <a href="javascipt:;" class="checkbox-btn item-check-btn" v-bind:class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
+                    <a href="javascipt:;" class="checkbox-btn item-check-btn" :class="{'check':item.checked=='1'}" @click="editCart('checked',item)">
                       <svg class="icon icon-ok">
                         <use xlink:href="#icon-ok"></use>
                       </svg>
@@ -119,10 +119,10 @@
             </div>
             <div class="cart-foot-r">
               <div class="item-total">
-                Item total: <span class="total-price">{{totalPrice|currency('$')}}</span>
+                Item total: <span class="total-price">{{totalPrice | currency("$")}}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red" v-bind:class="{'btn--dis':checkedCount==0}" @click="checkOut">Checkout</a>
+                <a class="btn btn--red" :class="{'btn--dis':checkCount ==0}" @click="checkOut">Checkout</a>
               </div>
             </div>
           </div>
@@ -185,34 +185,34 @@
                   }
                 ],
                 delItem:{},
-                modalConfirm:false
+                modalConfirm:false,
             }
         },
         mounted(){
             this.init();
         },
-        filters:{
+        filters:{   //局部过滤器    全局过滤器在main.js
           currency:currency
         },
         computed:{
           checkAllFlag(){
-            return this.checkedCount == this.cartList.length;
+            return this.checkCount == this.cartList.length;
           },
-          checkedCount(){
+          checkCount(){
             var i = 0;
-            this.cartList.forEach((item)=>{
-              if(item.checked=='1')i++;
+            this.cartList.forEach(item => {
+              if(item.checked == '1') i++;
             })
-            return i;
+            return i
           },
           totalPrice(){
             var money = 0;
-            this.cartList.forEach((item)=>{
-              if(item.checked=='1'){
-                money += parseFloat(item.salePrice)*parseInt(item.productNum);
+            this.cartList.forEach(item => {
+              if(item.checked == '1') {
+                money += parseFloat(item.salePrice)*parseInt(item.productNum)
               }
             })
-            return money;
+            return money
           }
         },
         components:{
@@ -263,7 +263,7 @@
                 axios.post("/users/cartEdit",{
                   productId:item.productId,
                   productNum:item.productNum,
-                  // checked:item.checked
+                  checked:item.checked
                 }).then((response)=>{
                     let res = response.data;
                     if(res.status=="0"){
@@ -272,21 +272,22 @@
                 })
             },
             toggleCheckAll(){
-                var flag = !this.checkAllFlag;
-                this.cartList.forEach((item)=>{
-                  item.checked = flag?'1':'0';
-                })
+                var flag = !this.checkAllFlag
+                this.cartList.forEach((item) => {
+                  item.checked = flag?"1":"0"
+                });
                 axios.post("/users/editCheckAll",{
                   checkAll:flag
-                }).then((response)=>{
-                    let res = response.data;
-                    if(res.status=='0'){
-                        console.log("update suc");
-                    }
+                }).then((response) => {
+                  var res = response.data
+                  if(res.status=="0"){
+                      console.log("suc")
+                  }
                 })
             },
+
             checkOut(){
-                if(this.checkedCount>0){
+                if(this.checkCount>0){
                     this.$router.push({
                         path:"/address"
                     });
