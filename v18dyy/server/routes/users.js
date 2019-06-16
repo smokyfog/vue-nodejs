@@ -221,5 +221,159 @@ router.get("/addressList", (req, res, next) => {
   })
 })
 
+//设置默认功能
+router.post("/setDefault", (req, res, next) => {
+  var userId = req.cookies.userId;
+  var addressId = req.body.addressId;
+  if(!addressId){
+    res.json({
+      status:'1003',
+      msg:"addressid none",
+      result:''
+    })
+  }
+  User.findOne({userId:userId}, (err, doc) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      var addressList = doc.addressList;
+      addressList.forEach(item => {
+        if(item.addressId == addressId){
+          item.isDefault = true
+        }else{
+          item.isDefault = false
+        }
+      })
+
+      doc.save((err, doc1) => {
+        if(err){
+          res.json({
+            status:'1',
+            msg:err.message,
+            result:''
+          })
+        }else{
+          res.json({
+            status:'0',
+            msg:'成功',
+            result:"success"
+          })
+        }
+      })
+    }
+
+  })
+})
+
+
+//删除地址
+router.post("/delAddress", (req, res, next) =>{
+  var userId = req.cookies.userId;
+  console.log(userId)
+  var addressId = req.body.addressId;
+  User.update({
+    userId:userId
+  }, {
+    $pull:{
+      "addressList":{
+        "addressId":addressId
+      }
+    }
+  },(err, doc) => {
+    console.log(doc)
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      res.json({
+        status:'0',
+        msg:'',
+        result:'success'
+      })
+    }
+  })
+})
+
+
+//订单
+router.post("/payMent", (req, res, next) => {
+  var userId = req.cookies.userId;
+  var orderTotal = req.body.orderTotal;
+  var addressId = req.body.addressId;
+  User.findOne({userId:userId}, (err, doc) => {
+    if(err){
+      res.json({
+        status:'1',
+        msg:err.message,
+        result:''
+      })
+    }else{
+      var address = '';
+      var goodsList = [];
+      var orderTotal = 0;
+      //获取当前用户的地址信息
+      doc.addressList.forEach(item => {
+        if(addressId = item.addressId){
+          address = item
+        }
+      })
+      //获取用户购物车的购买商品
+      doc.cartList.filter((item) => {
+        if(item.checked = 1){
+          goodsList.push(item)
+        }
+      })
+
+      var platform  = '622';
+
+      var r1 = Math.floor(Math.random() * 10)
+      var r2 = Math.floor(Math.random() * 10)
+
+      var sysDate = new Date().Format("yyyyMMddhhmmss");
+      var createDate = new Date().Format('yyyy-MM-dd hh:mm:ss')
+      var orderId = platform+r1+sysDate+r2
+
+      var order = {
+        orderId :orderId,
+        orderTotal:orderTotal,
+        addressInfo:address,
+        goodsList:goodsList,
+        orderStatus:'1',
+        createDate:''
+      }
+      doc.orderList.push(order);
+
+      doc.save(function (err1,doc1) {
+        if(err1){
+          res.json({
+            status:"1",
+            msg:err1.message,
+            result:''
+          });
+        }else{
+          res.json({
+            status:"0",
+            msg:'',
+            result:{
+              orderId:order.orderId,
+              orderTotal:order.orderTotal
+            }
+          });
+        }
+      });
+
+    }
+  })
+})
+
+
+
 
 module.exports = router;
