@@ -60,6 +60,7 @@
         },
         mounted(){
             var orderId = this.$route.query.orderId;
+            console.log("orderId:"+orderId);
             if(!orderId){
               return;
             }

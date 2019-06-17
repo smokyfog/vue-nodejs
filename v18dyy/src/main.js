@@ -23,21 +23,40 @@ Vue.use(VueLazyload, {
 Vue.filter("currency",currency);  //全局过滤器
 Vue.config.productionTip = false;
 
+// const store = new Vuex.Store({
+//   state: {
+//     nickName:'',
+//     cartCount:0
+//   },
+//   mutations: {
+//     //更新用户信息
+//     updateUserInfo(state, nickName) {
+//       state.nickName = nickName;
+//     },
+//     updateCartCount(state,cartCount){
+//       state.cartCount += cartCount;
+//     }
+//   }
+// });
+
 const store = new Vuex.Store({
-  state: {
-    nickName:'',
+  state:{
+    nickName:"",
     cartCount:0
   },
-  mutations: {
-    //更新用户信息
-    updateUserInfo(state, nickName) {
-      state.nickName = nickName;
+  mutations:{
+    updateUserInfo(state, nickName){
+      state.nickName = nickName
     },
     updateCartCount(state,cartCount){
       state.cartCount += cartCount;
+    },
+    initCartCount(state,cartCount){
+      state.cartCount = cartCount;
     }
   }
-});
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

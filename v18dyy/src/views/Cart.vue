@@ -242,8 +242,9 @@
                   let res = response.data;
                   if(res.status == '0'){
                     this.modalConfirm = false;
-                    // var delCount = this.delItem.productNum;
+                    var delCount = this.delItem.productNum;
                     // this.$store.commit("updateCartCount",-delCount);
+                    this.$store.commit("updateCartCount",-delCount)
                     this.init();
                   }
               });
@@ -259,7 +260,6 @@
                 }else{
                   item.checked = item.checked=="1"?'0':'1';
                 }
-
                 axios.post("/users/cartEdit",{
                   productId:item.productId,
                   productNum:item.productNum,
@@ -267,7 +267,11 @@
                 }).then((response)=>{
                     let res = response.data;
                     if(res.status=="0"){
-                      
+                      if(flag == 'add'){
+                        this.$store.commit("updateCartCount",1)
+                      }else if(flag == 'minu'){
+                        this.$store.commit("updateCartCount",-1)
+                      }
                     }
                 })
             },
