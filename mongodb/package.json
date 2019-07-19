@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "mongodb": "^3.3.0-beta2"
+  },
+  "dependencies": {
+    "ejs": "^2.5.6",
+    "mongoose": "^5.6.5"
+  }
+}
