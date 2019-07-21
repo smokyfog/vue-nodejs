@@ -21,36 +21,34 @@ db.order.aggregate([
 var ArticleModel=require('./model/article.js');
 //查询文章信息
 
-  /*
-  ArticleModel.find({},function(err,docs){
+ 
+  // ArticleModel.find({},function(err,docs){
+  //   console.log(docs);
+  // })
 
-    console.log(docs);
-  })
-
-  */
 
 //查询文章信息 并显示文章的分类 以及文章的作者信息
 
 
 //两个表关联查询
-  /*
-    ArticleModel.aggregate([
+ 
+    // ArticleModel.aggregate([
 
-      {
+    //   {
 
-        $lookup: {
-          from: "articlecate",
-          localField: "cid",
-          foreignField: "_id",
-          as: "cate"
-        }
-      }
+    //     $lookup: {
+    //       from: "articlecate",
+    //       localField: "cid",
+    //       foreignField: "_id",
+    //       as: "cate"
+    //     }
+    //   }
 
-    ],function(err,docs){
+    // ],function(err,docs){
+    //   console.log(err)
+    //   console.log(docs[0].cate)
+    // })
 
-      console.log(docs[2].cate)
-    })
-  */
 
 //三个表关联查询
  ArticleModel.aggregate([
@@ -66,7 +64,7 @@ var ArticleModel=require('./model/article.js');
   {
 
     $lookup: {
-      from: "user",
+      from: "users",
       localField: "author_id",
       foreignField: "_id",
       as: "user"
@@ -75,5 +73,5 @@ var ArticleModel=require('./model/article.js');
 
 ],function(err,docs){
 
-  console.log(JSON.stringify(docs));
+  console.log(JSON.stringify(docs,null,4));
 })
